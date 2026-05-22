@@ -1,9 +1,9 @@
 {
+  "ENTRA_API_SCOPE": "",
+  "API_URL": "",
   "ENTRA_CLIENT_ID": "",
   "ENTRA_TENANT_ID": "",
-  "ENTRA_API_SCOPE": "",
+  "AGENT_VERSION": "",
   "DEV_ACCESS_TOKEN": "",
-  "API_URL": "",
-  "AGENT_NAME": "",
-  "AGENT_VERSION": ""
+  "AGENT_NAME": ""
 }
