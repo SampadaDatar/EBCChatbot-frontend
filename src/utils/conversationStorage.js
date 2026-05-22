@@ -19,7 +19,9 @@ function writeAll(conversations) {
 
 export function getConversations() {
   return readAll()
-    .map(({ id, title, createdAt, updatedAt }) => ({ id, title, createdAt, updatedAt }))
+    .map(({ id, title, createdAt, updatedAt, apiConversationId }) => ({
+      id, title, createdAt, updatedAt, apiConversationId,
+    }))
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
 }
 
@@ -49,11 +51,12 @@ export function generateTitle(messages) {
   return text.length > 50 ? text.slice(0, 50) + '…' : text;
 }
 
-export function createConversation(messages) {
+export function createConversation(messages, apiConversationId) {
   return {
     id: crypto.randomUUID(),
     title: generateTitle(messages),
     messages,
+    apiConversationId: apiConversationId || null,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };

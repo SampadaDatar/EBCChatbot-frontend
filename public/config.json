@@ -1,6 +1,7 @@
 {
   "ENTRA_API_SCOPE": "",
   "API_URL": "",
+  "API_BASE_URL": "",
   "ENTRA_CLIENT_ID": "",
   "ENTRA_TENANT_ID": "",
   "AGENT_VERSION": "",

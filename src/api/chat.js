@@ -32,6 +32,17 @@ function getApiUrl() {
   );
 }
 
+function getApiBaseUrl() {
+  return getConfig('API_BASE_URL') || '';
+}
+
+function getAgentRef() {
+  return {
+    name: getConfig('AGENT_NAME') || 'EBCChatbot',
+    type: 'agent_reference',
+  };
+}
+
 function extractAssistantText(data) {
   if (typeof data?.output_text === 'string' && data.output_text.trim()) {
     return data.output_text;
@@ -78,8 +89,102 @@ async function getAccessToken() {
   return response.accessToken;
 }
 
-export function streamChat(messages, { onToken, onDone, onError, signal }) {
-  const url = getApiUrl();
+async function authHeaders() {
+  const token = await getAccessToken();
+  const headers = { 'Content-Type': 'application/json' };
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+  return headers;
+}
+
+// ── Conversations API (requires API_BASE_URL) ──
+
+export function isConversationsEnabled() {
+  return !!getApiBaseUrl();
+}
+
+export async function createApiConversation(userMessage) {
+  const base = getApiBaseUrl();
+  const headers = await authHeaders();
+  const res = await fetch(`${base}/conversations`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      items: [{ type: 'message', role: 'user', content: userMessage }],
+    }),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => res.statusText);
+    throw new Error(`Create conversation failed ${res.status}: ${text}`);
+  }
+  return res.json();
+}
+
+export async function addMessageToConversation(conversationId, text) {
+  const base = getApiBaseUrl();
+  const headers = await authHeaders();
+  const res = await fetch(`${base}/conversations/${conversationId}/items`, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      items: [{ type: 'message', role: 'user', content: text }],
+    }),
+  });
+  if (!res.ok) {
+    const errText = await res.text().catch(() => res.statusText);
+    throw new Error(`Add message failed ${res.status}: ${errText}`);
+  }
+  return res.json();
+}
+
+export async function deleteApiConversation(conversationId) {
+  const base = getApiBaseUrl();
+  if (!base) return;
+  const headers = await authHeaders();
+  const res = await fetch(`${base}/conversations/${conversationId}`, {
+    method: 'DELETE',
+    headers,
+  });
+  if (!res.ok) {
+    console.warn(`Delete conversation failed ${res.status}`);
+  }
+}
+
+// ── Chat (supports both conversation-based and stateless modes) ──
+
+export function streamChat(messagesOrConversationId, { onToken, onDone, onError, signal }) {
+  const useConversations = typeof messagesOrConversationId === 'string';
+
+  const buildRequest = (headers) => {
+    if (useConversations) {
+      // Conversation-based mode
+      const base = getApiBaseUrl();
+      return fetch(`${base}/responses`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          conversation: messagesOrConversationId,
+          agent: getAgentRef(),
+        }),
+        signal,
+      });
+    }
+    // Stateless fallback (original behavior)
+    const url = getApiUrl();
+    return fetch(url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        input: messagesOrConversationId.map((m) => ({ role: m.role, content: m.content })),
+        agent_reference: {
+          ...getAgentRef(),
+          version: getConfig('AGENT_VERSION') || '8',
+        },
+      }),
+      signal,
+    });
+  };
 
   getAccessToken()
     .then((token) => {
@@ -90,21 +195,7 @@ export function streamChat(messages, { onToken, onDone, onError, signal }) {
         headers.Authorization = `Bearer ${token}`;
       }
 
-      return (
-      fetch(url, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          input: messages.map((m) => ({ role: m.role, content: m.content })),
-          agent_reference: {
-            name: getConfig('AGENT_NAME') || 'EBCChatbot',
-            version: getConfig('AGENT_VERSION') || '8',
-            type: 'agent_reference',
-          },
-        }),
-        signal,
-      })
-      );
+      return buildRequest(headers);
     })
     .then(async (res) => {
       if (!res.ok) {

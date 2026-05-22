@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { streamChat } from '../api/chat';
 import {
-    createConversation,
-    deleteConversation,
-    getConversation,
-    getConversations,
-    saveConversation,
+  addMessageToConversation,
+  createApiConversation,
+  deleteApiConversation,
+  isConversationsEnabled,
+  streamChat,
+} from '../api/chat';
+import {
+  createConversation,
+  deleteConversation,
+  getConversation,
+  getConversations,
+  saveConversation,
 } from '../utils/conversationStorage';
 import ChatHistory from './ChatHistory';
 import ChatInput from './ChatInput';
@@ -15,16 +21,22 @@ export default function ChatWindow() {
   const [messages, setMessages] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+  const [apiConvId, setApiConvId] = useState(null);
   const [conversations, setConversations] = useState(() => getConversations());
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const abortRef = useRef(null);
   const bottomRef = useRef(null);
   const convIdRef = useRef(null);
+  const apiConvIdRef = useRef(null);
 
-  // Keep ref in sync so streaming callbacks see latest value
+  // Keep refs in sync so streaming callbacks see latest values
   useEffect(() => {
     convIdRef.current = conversationId;
   }, [conversationId]);
+
+  useEffect(() => {
+    apiConvIdRef.current = apiConvId;
+  }, [apiConvId]);
 
   const refreshList = useCallback(() => {
     setConversations(getConversations());
@@ -35,9 +47,9 @@ export default function ChatWindow() {
   }, []);
 
   const persistConversation = useCallback(
-    (msgs, id) => {
+    (msgs, id, apiId) => {
       if (!id) {
-        const conv = createConversation(msgs);
+        const conv = createConversation(msgs, apiId);
         saveConversation(conv);
         setConversationId(conv.id);
         convIdRef.current = conv.id;
@@ -48,6 +60,9 @@ export default function ChatWindow() {
       if (existing) {
         existing.messages = msgs;
         existing.updatedAt = new Date().toISOString();
+        if (apiId && !existing.apiConversationId) {
+          existing.apiConversationId = apiId;
+        }
         saveConversation(existing);
         refreshList();
       }
@@ -57,7 +72,7 @@ export default function ChatWindow() {
   );
 
   const handleSend = useCallback(
-    (text) => {
+    async (text) => {
       const userMsg = { role: 'user', content: text };
       const assistantMsg = { role: 'assistant', content: '' };
 
@@ -67,9 +82,31 @@ export default function ChatWindow() {
       const controller = new AbortController();
       abortRef.current = controller;
 
-      const allMessages = [...messages, userMsg];
+      let currentApiId = apiConvId;
 
-      streamChat(allMessages, {
+      // If Conversations API is enabled, create or add to conversation
+      if (isConversationsEnabled()) {
+        try {
+          if (!currentApiId) {
+            // First message — create a new API conversation
+            const conv = await createApiConversation(text);
+            currentApiId = conv.id;
+            setApiConvId(conv.id);
+            apiConvIdRef.current = conv.id;
+          } else {
+            // Subsequent message — add to existing conversation
+            await addMessageToConversation(currentApiId, text);
+          }
+        } catch (err) {
+          console.warn('Conversations API failed, falling back to stateless:', err.message);
+          currentApiId = null;
+        }
+      }
+
+      // Determine what to pass to streamChat
+      const chatArg = currentApiId || [...messages, userMsg];
+
+      streamChat(chatArg, {
         signal: controller.signal,
         onToken: (token) => {
           setMessages((prev) => {
@@ -90,7 +127,8 @@ export default function ChatWindow() {
           // Persist after assistant finishes
           setMessages((prev) => {
             const id = convIdRef.current;
-            persistConversation(prev, id);
+            const aId = apiConvIdRef.current;
+            persistConversation(prev, id, aId);
             return prev;
           });
         },
@@ -108,7 +146,7 @@ export default function ChatWindow() {
         },
       });
     },
-    [messages, scrollToBottom, persistConversation],
+    [messages, scrollToBottom, persistConversation, apiConvId],
   );
 
   const handleSelectConversation = useCallback(
@@ -118,6 +156,7 @@ export default function ChatWindow() {
       if (conv) {
         setMessages(conv.messages);
         setConversationId(id);
+        setApiConvId(conv.apiConversationId || null);
       }
       setSidebarOpen(false);
     },
@@ -128,15 +167,21 @@ export default function ChatWindow() {
     if (isStreaming) return;
     setMessages([]);
     setConversationId(null);
+    setApiConvId(null);
     setSidebarOpen(false);
   }, [isStreaming]);
 
   const handleDeleteConversation = useCallback(
     (id) => {
+      const conv = getConversation(id);
+      if (conv?.apiConversationId) {
+        deleteApiConversation(conv.apiConversationId).catch(() => {});
+      }
       deleteConversation(id);
       if (conversationId === id) {
         setMessages([]);
         setConversationId(null);
+        setApiConvId(null);
       }
       refreshList();
     },
