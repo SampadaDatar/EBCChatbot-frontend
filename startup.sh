@@ -10,6 +10,7 @@ cat <<EOF > "$CONFIG_PATH"
   "ENTRA_TENANT_ID": "${ENTRA_TENANT_ID}",
   "ENTRA_API_SCOPE": "${ENTRA_API_SCOPE:-https://ai.azure.com/.default}",
   "API_URL": "${API_URL}",
+  "API_BASE_URL": "${API_BASE_URL}",
   "AGENT_NAME": "${AGENT_NAME:-EBCChatbot}",
   "AGENT_VERSION": "${AGENT_VERSION:-8}"
 }

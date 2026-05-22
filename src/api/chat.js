@@ -104,36 +104,17 @@ export function isConversationsEnabled() {
   return !!getApiBaseUrl();
 }
 
-export async function createApiConversation(userMessage) {
+export async function createApiConversation() {
   const base = getApiBaseUrl();
   const headers = await authHeaders();
   const res = await fetch(`${base}/conversations`, {
     method: 'POST',
     headers,
-    body: JSON.stringify({
-      items: [{ type: 'message', role: 'user', content: userMessage }],
-    }),
+    body: JSON.stringify({}),
   });
   if (!res.ok) {
     const text = await res.text().catch(() => res.statusText);
     throw new Error(`Create conversation failed ${res.status}: ${text}`);
-  }
-  return res.json();
-}
-
-export async function addMessageToConversation(conversationId, text) {
-  const base = getApiBaseUrl();
-  const headers = await authHeaders();
-  const res = await fetch(`${base}/conversations/${conversationId}/items`, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      items: [{ type: 'message', role: 'user', content: text }],
-    }),
-  });
-  if (!res.ok) {
-    const errText = await res.text().catch(() => res.statusText);
-    throw new Error(`Add message failed ${res.status}: ${errText}`);
   }
   return res.json();
 }
@@ -153,19 +134,23 @@ export async function deleteApiConversation(conversationId) {
 
 // ── Chat (supports both conversation-based and stateless modes) ──
 
-export function streamChat(messagesOrConversationId, { onToken, onDone, onError, signal }) {
-  const useConversations = typeof messagesOrConversationId === 'string';
+export function streamChat(inputOrMessages, { conversationId, onToken, onDone, onError, signal }) {
+  const useConversations = typeof conversationId === 'string';
 
   const buildRequest = (headers) => {
     if (useConversations) {
-      // Conversation-based mode
+      // Conversation-based mode — input is included in the responses call
       const base = getApiBaseUrl();
       return fetch(`${base}/responses`, {
         method: 'POST',
         headers,
         body: JSON.stringify({
-          conversation: messagesOrConversationId,
-          agent: getAgentRef(),
+          conversation: conversationId,
+          agent_reference: {
+            ...getAgentRef(),
+            version: getConfig('AGENT_VERSION') || '8',
+          },
+          input: [{ role: 'user', content: inputOrMessages }],
         }),
         signal,
       });
@@ -176,7 +161,7 @@ export function streamChat(messagesOrConversationId, { onToken, onDone, onError,
       method: 'POST',
       headers,
       body: JSON.stringify({
-        input: messagesOrConversationId.map((m) => ({ role: m.role, content: m.content })),
+        input: inputOrMessages.map((m) => ({ role: m.role, content: m.content })),
         agent_reference: {
           ...getAgentRef(),
           version: getConfig('AGENT_VERSION') || '8',

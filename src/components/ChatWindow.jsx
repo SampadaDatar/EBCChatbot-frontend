@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  addMessageToConversation,
   createApiConversation,
   deleteApiConversation,
   isConversationsEnabled,
@@ -84,19 +83,13 @@ export default function ChatWindow() {
 
       let currentApiId = apiConvId;
 
-      // If Conversations API is enabled, create or add to conversation
-      if (isConversationsEnabled()) {
+      // If Conversations API is enabled, ensure we have a conversation
+      if (isConversationsEnabled() && !currentApiId) {
         try {
-          if (!currentApiId) {
-            // First message — create a new API conversation
-            const conv = await createApiConversation(text);
-            currentApiId = conv.id;
-            setApiConvId(conv.id);
-            apiConvIdRef.current = conv.id;
-          } else {
-            // Subsequent message — add to existing conversation
-            await addMessageToConversation(currentApiId, text);
-          }
+          const conv = await createApiConversation();
+          currentApiId = conv.id;
+          setApiConvId(conv.id);
+          apiConvIdRef.current = conv.id;
         } catch (err) {
           console.warn('Conversations API failed, falling back to stateless:', err.message);
           currentApiId = null;
@@ -104,9 +97,10 @@ export default function ChatWindow() {
       }
 
       // Determine what to pass to streamChat
-      const chatArg = currentApiId || [...messages, userMsg];
+      const chatArg = currentApiId ? text : [...messages, userMsg];
 
       streamChat(chatArg, {
+        conversationId: currentApiId || undefined,
         signal: controller.signal,
         onToken: (token) => {
           setMessages((prev) => {
