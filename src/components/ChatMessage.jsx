@@ -1,7 +1,29 @@
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 
-export default function ChatMessage({ role, content, isLoading = false }) {
+function CitationList({ citations }) {
+  if (!citations?.length) return null;
+  return (
+    <div className="citations">
+      <div className="citations-label">Sources:</div>
+      <ul className="citations-list">
+        {citations.map((c, i) => (
+          <li key={i}>
+            {c.type === 'url' ? (
+              <a href={c.url} target="_blank" rel="noopener noreferrer">
+                {c.title}
+              </a>
+            ) : (
+              <span className="citation-file">{c.filename}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function ChatMessage({ role, content, citations, isLoading = false }) {
   const isUser = role === 'user';
 
   return (
@@ -16,7 +38,10 @@ export default function ChatMessage({ role, content, isLoading = false }) {
             <span />
           </div>
         ) : (
-          <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+          <>
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <CitationList citations={citations} />
+          </>
         )}
       </div>
     </div>
