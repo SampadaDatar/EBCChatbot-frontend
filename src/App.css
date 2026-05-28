@@ -298,6 +298,56 @@
   text-decoration: underline;
 }
 
+/* ── Citations ── */
+.citations {
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.citations-label {
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.citations-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.citations-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.citations-list li::before {
+  content: '📄';
+  font-size: 12px;
+  flex-shrink: 0;
+}
+
+.citations-list a {
+  color: var(--accent);
+  text-decoration: none;
+  word-break: break-all;
+}
+
+.citations-list a:hover {
+  text-decoration: underline;
+}
+
+.citation-file {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .typing-indicator {
   display: inline-flex;
   align-items: center;

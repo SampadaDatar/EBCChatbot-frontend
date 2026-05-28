@@ -43,9 +43,40 @@ function getAgentRef() {
   };
 }
 
+function extractCitations(parts) {
+  const seen = new Set();
+  const citations = [];
+  for (const part of parts) {
+    const annotations = part?.annotations || [];
+    for (const ann of annotations) {
+      if (ann.type === 'url_citation' && ann.url) {
+        const key = ann.url;
+        if (!seen.has(key)) {
+          seen.add(key);
+          citations.push({ type: 'url', url: ann.url, title: ann.title || ann.url });
+        }
+      } else if (ann.type === 'file_citation' && (ann.filename || ann.file_id)) {
+        const key = ann.file_id || ann.filename;
+        if (!seen.has(key)) {
+          seen.add(key);
+          citations.push({ type: 'file', fileId: ann.file_id, filename: ann.filename || ann.file_id });
+        }
+      }
+    }
+  }
+  return citations;
+}
+
 function extractAssistantText(data) {
   if (typeof data?.output_text === 'string' && data.output_text.trim()) {
-    return data.output_text;
+    // Top-level output_text — check for annotations in output items
+    const outputItems = data?.output || [];
+    const msgItem = outputItems.find(
+      (item) => item?.type === 'message' && item?.role === 'assistant',
+    );
+    const parts = msgItem?.content || [];
+    const citations = extractCitations(parts);
+    return { text: data.output_text, citations };
   }
 
   const message = (data?.output || []).find(
@@ -57,12 +88,13 @@ function extractAssistantText(data) {
     .map((part) => part.text)
     .join('')
     .trim();
+  const citations = extractCitations(parts);
 
   if (text) {
-    return text;
+    return { text, citations };
   }
 
-  return '';
+  return { text: '', citations: [] };
 }
 
 async function getAccessToken() {
@@ -134,7 +166,7 @@ export async function deleteApiConversation(conversationId) {
 
 // ── Chat (supports both conversation-based and stateless modes) ──
 
-export function streamChat(inputOrMessages, { conversationId, onToken, onDone, onError, signal }) {
+export function streamChat(inputOrMessages, { conversationId, onToken, onCitations, onDone, onError, signal }) {
   const useConversations = typeof conversationId === 'string';
 
   const buildRequest = (headers) => {
@@ -203,9 +235,12 @@ export function streamChat(inputOrMessages, { conversationId, onToken, onDone, o
       } else {
         // JSON response (Responses API)
         const data = await res.json();
-        const text = extractAssistantText(data);
-        if (text) {
-          onToken(text);
+        const result = extractAssistantText(data);
+        if (result.text) {
+          onToken(result.text);
+        }
+        if (result.citations?.length) {
+          onCitations?.(result.citations);
         }
       }
 

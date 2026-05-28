@@ -1,16 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  createApiConversation,
-  deleteApiConversation,
-  isConversationsEnabled,
-  streamChat,
+    createApiConversation,
+    deleteApiConversation,
+    isConversationsEnabled,
+    streamChat,
 } from '../api/chat';
 import {
-  createConversation,
-  deleteConversation,
-  getConversation,
-  getConversations,
-  saveConversation,
+    createConversation,
+    deleteConversation,
+    getConversation,
+    getConversations,
+    saveConversation,
 } from '../utils/conversationStorage';
 import ChatHistory from './ChatHistory';
 import ChatInput from './ChatInput';
@@ -113,6 +113,17 @@ export default function ChatWindow() {
             return updated;
           });
           scrollToBottom();
+        },
+        onCitations: (citations) => {
+          setMessages((prev) => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            updated[updated.length - 1] = {
+              ...last,
+              citations,
+            };
+            return updated;
+          });
         },
         onDone: () => {
           setIsStreaming(false);
@@ -223,6 +234,7 @@ export default function ChatWindow() {
               key={i}
               role={msg.role}
               content={msg.content}
+              citations={msg.citations}
               isLoading={
                 isStreaming &&
                 i === messages.length - 1 &&
