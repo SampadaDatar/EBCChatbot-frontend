@@ -1,0 +1,152 @@
+/* ── Branding Header Container ── */
+.branding-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 32px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.branding-header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 100%;
+  gap: 24px;
+}
+
+/* ── County and Department Text ── */
+.branding-header-text {
+  flex: 1;
+  text-align: center;
+}
+
+.branding-county {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.2;
+  color: white;
+}
+
+.branding-department {
+  margin: 8px 0 0 0;
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  color: white;
+}
+
+/* ── Logo/Icon ── */
+.branding-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  font-size: 40px;
+  font-weight: bold;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.branding-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+/* ── Separator Line ── */
+.branding-separator {
+  height: 6px;
+  flex-shrink: 0;
+}
+
+/* ── App Title Section ── */
+.branding-title-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 32px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.branding-app-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: white;
+  text-align: center;
+}
+
+/* ── Responsive Design ── */
+@media (max-width: 768px) {
+  .branding-header {
+    padding: 16px 20px;
+  }
+
+  .branding-header-content {
+    gap: 16px;
+  }
+
+  .branding-county {
+    font-size: 24px;
+    letter-spacing: 1px;
+  }
+
+  .branding-department {
+    font-size: 16px;
+    margin-top: 4px;
+  }
+
+  .branding-logo {
+    width: 56px;
+    height: 56px;
+    font-size: 32px;
+  }
+
+  .branding-title-section {
+    padding: 16px 20px;
+  }
+
+  .branding-app-title {
+    font-size: 20px;
+    letter-spacing: 0.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .branding-header {
+    padding: 12px 16px;
+  }
+
+  .branding-county {
+    font-size: 20px;
+    letter-spacing: 0.5px;
+  }
+
+  .branding-department {
+    font-size: 14px;
+  }
+
+  .branding-logo {
+    width: 48px;
+    height: 48px;
+    font-size: 28px;
+  }
+
+  .branding-title-section {
+    padding: 12px 16px;
+  }
+
+  .branding-app-title {
+    font-size: 18px;
+  }
+}
