@@ -32,10 +32,10 @@ export const alamedaBranding = {
     iconColor: '#4a4a4a',
   },
   
-  // Logo/Icon - Now using the uploaded logo.svg file
+  // Logo/Icon - Using the correct public path for the logo.svg file
   logo: {
     type: 'image',
-    content: '/src/assets/logo.svg',
+    content: '/assets/logo.svg',
   },
 };
 
