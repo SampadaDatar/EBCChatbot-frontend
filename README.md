@@ -1,3 +1,12 @@
+<div style="background-color: #4a4a4a; padding: 20px; text-align: center; color: white; font-family: Arial, sans-serif;">
+  <div style="font-size: 24px; font-weight: bold; letter-spacing: 2px;">ALAMEDA COUNTY</div>
+  <div style="font-size: 18px; margin-top: 5px;">Human Resource Services</div>
+</div>
+
+<div style="background-color: #2d5f4f; padding: 15px; text-align: center; color: white; font-family: Arial, sans-serif;">
+  <div style="font-size: 22px; font-weight: bold;">Benefits Enrollment Assistant</div>
+</div>
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -13,4 +22,4 @@ The React Compiler is not enabled on this template because of its impact on dev 
 
 ## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts).
