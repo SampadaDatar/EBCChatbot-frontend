@@ -12,6 +12,7 @@ import {
     getConversations,
     saveConversation,
 } from '../utils/conversationStorage';
+import BrandingHeader from './BrandingHeader';
 import ChatHistory from './ChatHistory';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
@@ -216,6 +217,9 @@ export default function ChatWindow() {
 
       {/* Main chat area */}
       <div className="chat-window">
+        {/* Branding Header */}
+        <BrandingHeader />
+        
         <div className="chat-toolbar">
           <button
             className="sidebar-toggle"
