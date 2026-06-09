@@ -231,7 +231,11 @@ export default function ChatWindow() {
         </div>
         <div className="chat-messages">
           {messages.length === 0 && (
-            <div className="chat-empty">Send a message to start chatting.</div>
+            <div className="chat-empty">Hi I'm BEA, your Benefits Enrollment Assistant.
+
+I was built to answer questions about your Alameda County employee benefits.
+
+You can ask me any benefit related question, and I will do my best to answer.</div>
           )}
           {messages.map((msg, i) => (
             <ChatMessage
