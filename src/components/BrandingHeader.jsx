@@ -6,7 +6,7 @@ export default function BrandingHeader() {
 
   return (
     <>
-      {/* Header Section */}
+      {/* Header Section - ALAMEDA COUNTY & Human Resource Services */}
       <div className="branding-header" style={{ backgroundColor: colors.headerBg }}>
         <div className="branding-header-content">
           {/* County and Department Info */}
@@ -15,7 +15,7 @@ export default function BrandingHeader() {
             <p className="branding-department">{department}</p>
           </div>
 
-          {/* Logo Icon */}
+          {/* Logo Icon - Display the uploaded logo */}
           <div
             className="branding-logo"
             style={{
@@ -28,14 +28,8 @@ export default function BrandingHeader() {
         </div>
       </div>
 
-      {/* Separator Line */}
-      <div
-        className="branding-separator"
-        style={{ backgroundColor: colors.separatorColor }}
-      />
-
-      {/* App Title Section */}
-      <div className="branding-title-section" style={{ backgroundColor: colors.headerBg }}>
+      {/* App Title Section - Benefits Enrollment Assistant */}
+      <div className="branding-title-section" style={{ backgroundColor: colors.titleBg }}>
         <h2 className="branding-app-title">{appTitle}</h2>
       </div>
     </>
