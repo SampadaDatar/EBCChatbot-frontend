@@ -12,9 +12,13 @@ export const alamedaBranding = {
   
   // Colors
   colors: {
-    // Header colors
-    headerBg: '#0d6a5e', // Dark teal
+    // Header colors (dark gray)
+    headerBg: '#4a4a4a', // Dark gray
     headerText: '#ffffff', // White text
+    
+    // Title section colors (dark green)
+    titleBg: '#2d5f4f', // Dark green
+    titleText: '#ffffff', // White text
     
     // Accent color
     accentColor: '#ff8c42', // Orange
@@ -23,16 +27,15 @@ export const alamedaBranding = {
     // Separator/border accent
     separatorColor: '#ff8c42', // Orange separator line
     
-    // Icon background (for the orange square)
+    // Icon background (for the logo square)
     iconBg: '#ffffff',
-    iconColor: '#ff8c42',
+    iconColor: '#4a4a4a',
   },
   
-  // Logo/Icon (you can replace with actual logo URL)
+  // Logo/Icon - Now using the uploaded logo.svg file
   logo: {
-    // SVG X icon in orange circle
-    type: 'icon',
-    content: 'X', // Can be replaced with actual SVG or image URL
+    type: 'image',
+    content: '/src/assets/logo.svg',
   },
 };
 
