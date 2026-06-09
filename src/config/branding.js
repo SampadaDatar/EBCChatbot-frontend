@@ -32,10 +32,10 @@ export const alamedaBranding = {
     iconColor: '#4a4a4a',
   },
   
-  // Logo/Icon - Using the correct public path for the logo.svg file
+  // Logo/Icon - Using Vite's asset handling for robust path resolution
   logo: {
     type: 'image',
-    content: '/assets/logo.svg',
+    content: new URL('../assets/logo.svg', import.meta.url).href,
   },
 };
 
