@@ -386,6 +386,17 @@
   }
 }
 
+/* ── Disclaimer ── */
+.chat-disclaimer {
+  padding: 8px 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  flex-shrink: 0;
+}
+
 /* ── Input Bar ── */
 .chat-input {
   display: flex;
