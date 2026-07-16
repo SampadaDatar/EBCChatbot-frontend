@@ -254,7 +254,7 @@ You can ask me any benefit related question, and I will do my best to answer.</d
           <div ref={bottomRef} />
         </div>
         <div className="chat-disclaimer">
-          AI-generated content may be incorrect
+          AI-generated content may omit context or details; please confirm important information with EBC.
         </div>
         <ChatInput onSend={handleSend} disabled={isStreaming} />
       </div>
