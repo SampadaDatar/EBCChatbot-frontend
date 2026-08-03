@@ -254,7 +254,7 @@ You can ask me any HR related questions, and I will do my best to answer.</div>
           <div ref={bottomRef} />
         </div>
         <div className="chat-disclaimer">
-          AI-generated content may omit context or details; please confirm important information with EBC.
+          AI-generated content may omit context or details; please confirm important information with HR.
         </div>
         <ChatInput onSend={handleSend} disabled={isStreaming} />
       </div>
