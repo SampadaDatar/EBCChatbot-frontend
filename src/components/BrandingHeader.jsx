@@ -1,4 +1,34 @@
+import '../styles/BrandingHeader.css';
+import { alamedaBranding } from '../config/branding';
+
 export default function BrandingHeader() {
-  // Banner removed — component intentionally renders nothing so the banner will not appear.
-  return null;
+  const { county, department, colors, logo } = alamedaBranding;
+
+  return (
+    <>
+      {/* Header Section - ALAMEDA COUNTY & Human Resource Services */}
+      <div className="branding-header" style={{ backgroundColor: colors.headerBg }}>
+        <div className="branding-header-content">
+          {/* County and Department Info */}
+          <div className="branding-header-text">
+            <h1 className="branding-county">{county}</h1>
+            <p className="branding-department">{department}</p>
+          </div>
+
+          {/* Logo Icon - Display the uploaded logo */}
+          <div
+            className="branding-logo"
+            style={{
+              backgroundColor: colors.iconBg,
+              color: colors.iconColor,
+            }}
+          >
+            {logo.type === 'icon' ? logo.content : <img src={logo.content} alt="County Logo" />}
+          </div>
+        </div>
+      </div>
+
+      {/* App Title Section - Benefits Enrollment Assistant - REMOVED */}
+    </>
+  );
 }
