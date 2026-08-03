@@ -231,11 +231,11 @@ export default function ChatWindow() {
         </div>
         <div className="chat-messages">
           {messages.length === 0 && (
-            <div className="chat-empty">Hi I'm BEA, your Benefits Enrollment Assistant.
+            <div className="chat-empty">Hi I'm your HR Assistant.
 
-I was built to answer questions about your Alameda County employee benefits.
+I was built to answer questions about your Alameda County HR policies and employee benefits.
 
-You can ask me any benefit related question, and I will do my best to answer.</div>
+You can ask me any HR related questions, and I will do my best to answer.</div>
           )}
           {messages.map((msg, i) => (
             <ChatMessage
