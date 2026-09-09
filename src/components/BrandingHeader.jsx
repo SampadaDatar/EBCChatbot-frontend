@@ -2,7 +2,7 @@ import '../styles/BrandingHeader.css';
 import { alamedaBranding } from '../config/branding';
 
 export default function BrandingHeader() {
-  const { county, department, colors, logo } = alamedaBranding;
+  const { county, department, colors } = alamedaBranding;
 
   return (
     <>
@@ -13,17 +13,6 @@ export default function BrandingHeader() {
           <div className="branding-header-text">
             <h1 className="branding-county">{county}</h1>
             <p className="branding-department">{department}</p>
-          </div>
-
-          {/* Logo Icon - Display the uploaded logo */}
-          <div
-            className="branding-logo"
-            style={{
-              backgroundColor: colors.iconBg,
-              color: colors.iconColor,
-            }}
-          >
-            {logo.type === 'icon' ? logo.content : <img src={logo.content} alt="County Logo" />}
           </div>
         </div>
       </div>
