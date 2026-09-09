@@ -12,8 +12,8 @@ export const alamedaBranding = {
   
   // Colors
   colors: {
-    // Header colors (dark gray)
-    headerBg: '#4a4a4a', // Dark gray
+    // Header colors (blue)
+    headerBg: '#3d5a96', // Blue
     headerText: '#ffffff', // White text
     
     // Title section colors (dark green)
