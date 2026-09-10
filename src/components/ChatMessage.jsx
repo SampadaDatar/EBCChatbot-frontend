@@ -3,6 +3,12 @@ import remarkGfm from 'remark-gfm';
 
 function CitationList({ citations }) {
   if (!citations?.length) return null;
+
+  const handleCitationClick = (e, url) => {
+    e.preventDefault();
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <div className="citations">
       <div className="citations-label">Sources:</div>
@@ -10,7 +16,10 @@ function CitationList({ citations }) {
         {citations.map((c, i) => (
           <li key={i}>
             {c.type === 'url' ? (
-              <a href={c.url} target="_blank" rel="noopener noreferrer">
+              <a 
+                href={c.url} 
+                onClick={(e) => handleCitationClick(e, c.url)}
+              >
                 {c.title}
               </a>
             ) : (
