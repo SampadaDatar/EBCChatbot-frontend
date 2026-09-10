@@ -48,7 +48,16 @@ export default function ChatMessage({ role, content, citations, isLoading = fals
           </div>
         ) : (
           <>
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+            <ReactMarkdown 
+              remarkPlugins={[remarkGfm]}
+              components={{
+                a: ({node, ...props}) => (
+                  <a {...props} target="_blank" rel="noopener noreferrer" />
+                )
+              }}
+            >
+              {content}
+            </ReactMarkdown>
             <CitationList citations={citations} />
           </>
         )}
